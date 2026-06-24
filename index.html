@@ -27,7 +27,6 @@
     }
 
     #app {
-      /* Constrain to viewport in both axes, maintain image aspect ratio */
       width: min(100vw, 941px, calc(100vh * 941 / 1672));
       aspect-ratio: 941 / 1672;
       position: relative;
@@ -55,13 +54,13 @@
 
     #app.light #bg-light-img { opacity: 1; }
 
-    /* Quote zone */
+    /* Quote zone — positioned over each background's content area */
     #quote-zone {
       position: absolute;
       left: 10%;
       right: 10%;
-      top: 49%;
-      bottom: 15%;
+      top: 50%;
+      bottom: 17%;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -69,44 +68,76 @@
     }
 
     #app.light #quote-zone {
-      top: 43%;
-      bottom: 14%;
+      top: 44%;
+      bottom: 15%;
       left: 13%;
       right: 13%;
     }
 
+    /* Quote + attribution block — font-size set by fitText() */
+    #quote-block {
+      width: 100%;
+      transition: opacity 0.3s ease;
+    }
+
+    #quote-block.fade { opacity: 0; }
+
     #quote {
       font-family: 'Georgia', serif;
-      line-height: 1.6;
+      font-size: 1em;
+      line-height: 1.55;
       text-align: center;
       color: #f0ebe0;
       text-shadow: 0 2px 8px rgba(0,0,0,0.85), 0 0 24px rgba(0,0,0,0.5);
-      transition: opacity 0.3s ease, color 0.4s ease, text-shadow 0.4s ease;
+      transition: color 0.4s ease, text-shadow 0.4s ease;
     }
 
     #app.light #quote {
       color: #1a1a2e;
-      text-shadow: 0 1px 4px rgba(255,255,255,0.6);
+      text-shadow: 0 1px 3px rgba(255,255,255,0.5);
     }
 
-    #quote.fade { opacity: 0; }
+    #attr {
+      font-family: 'Georgia', serif;
+      font-size: 1em;
+      font-style: italic;
+      text-align: right;
+      margin-top: 0.6em;
+      color: #f0ebe0;
+      text-shadow: 0 2px 8px rgba(0,0,0,0.85);
+      transition: color 0.4s ease, text-shadow 0.4s ease;
+    }
 
-    /* Tap hint */
+    #app.light #attr {
+      color: #1a1a2e;
+      text-shadow: 0 1px 3px rgba(255,255,255,0.5);
+    }
+
+    /* Tap hint pill */
     #hint {
       position: absolute;
-      bottom: 10px;
-      left: 0; right: 0;
-      text-align: center;
+      bottom: 3%;
+      left: 50%;
+      transform: translateX(-50%);
+      white-space: nowrap;
       font-family: sans-serif;
-      font-size: clamp(9px, 2.4vw, 11px);
-      letter-spacing: 2px;
+      font-size: clamp(10px, 2.5vw, 12px);
+      letter-spacing: 1.5px;
       text-transform: uppercase;
       pointer-events: none;
-      color: rgba(255,255,255,0.35);
-      transition: color 0.4s ease;
+      background: rgba(0,0,0,0.3);
+      color: rgba(255,255,255,0.85);
+      padding: 5px 14px;
+      border-radius: 999px;
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
+      transition: background 0.4s ease, color 0.4s ease;
     }
 
-    #app.light #hint { color: rgba(20,20,50,0.4); }
+    #app.light #hint {
+      background: rgba(255,255,255,0.4);
+      color: rgba(20,20,50,0.85);
+    }
 
     /* Theme toggle */
     #theme-toggle {
@@ -191,10 +222,13 @@
   </div>
 
   <div id="quote-zone">
-    <p id="quote"></p>
+    <div id="quote-block">
+      <p id="quote"></p>
+      <p id="attr">— Gaz</p>
+    </div>
   </div>
 
-  <p id="hint">tap anywhere for another</p>
+  <p id="hint">tap for another</p>
 
 </div>
 <script>
@@ -234,10 +268,11 @@
     "I don't give a frog's knob what you've got in there."
   ];
 
-  const app       = document.getElementById('app');
+  const app        = document.getElementById('app');
   const quoteEl   = document.getElementById('quote');
-  const quoteZone = document.getElementById('quote-zone');
-  const toggle    = document.getElementById('theme-toggle');
+  const quoteBlock = document.getElementById('quote-block');
+  const quoteZone  = document.getElementById('quote-zone');
+  const toggle     = document.getElementById('theme-toggle');
 
   let deck = [];
 
@@ -256,34 +291,35 @@
     return quotes[deck.pop()];
   }
 
+  // Scale font-size on quoteBlock until the whole block (quote + attr) fits the zone
   function fitText() {
-    const maxPx = 30, minPx = 11;
-    const available = quoteZone.clientHeight - 20;
-    let size = maxPx;
-    quoteEl.style.fontSize = size + 'px';
-    while (quoteEl.scrollHeight > available && size > minPx) {
+    const zoneH = quoteZone.clientHeight;
+    if (!zoneH) return;
+    const available = zoneH - 16;
+    let size = 30;
+    quoteBlock.style.fontSize = size + 'px';
+    while (quoteBlock.scrollHeight > available && size > 11) {
       size -= 0.5;
-      quoteEl.style.fontSize = size + 'px';
+      quoteBlock.style.fontSize = size + 'px';
     }
   }
 
   function showQuote() {
-    quoteEl.classList.add('fade');
+    quoteBlock.classList.add('fade');
     setTimeout(() => {
       quoteEl.textContent = pickNext();
-      quoteEl.classList.remove('fade');
+      quoteBlock.classList.remove('fade');
       fitText();
     }, 300);
   }
 
-  // Defer first render until layout is complete
-  requestAnimationFrame(() => {
-    quoteEl.textContent = pickNext();
-    fitText();
-  });
+  quoteEl.textContent = pickNext();
+
+  // ResizeObserver fires once the zone has real dimensions (reliable on mobile)
+  new ResizeObserver(fitText).observe(quoteZone);
 
   toggle.addEventListener('touchstart', e => {
-    e.stopPropagation(); // prevent bubbling to app's touchstart (which would eat the click)
+    e.stopPropagation();
   }, { passive: true });
 
   toggle.addEventListener('click', e => {
@@ -303,8 +339,6 @@
     if (!touchFired) showQuote();
     touchFired = false;
   });
-
-  window.addEventListener('resize', fitText);
 </script>
 </body>
 </html>
