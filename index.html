@@ -149,24 +149,16 @@
     /* Version badge */
     #version {
       position: absolute;
-      bottom: 3%;
-      right: 14px;
+      bottom: 7px;
+      right: 10px;
       font-family: monospace;
-      font-size: 10px;
-      letter-spacing: 0.5px;
+      font-size: 9px;
+      color: rgba(255,255,255,0.25);
       pointer-events: none;
-      background: rgba(0,0,0,0.3);
-      color: rgba(255,255,255,0.9);
-      padding: 5px 10px;
-      border-radius: 999px;
-      backdrop-filter: blur(4px);
-      -webkit-backdrop-filter: blur(4px);
+      letter-spacing: 0.5px;
     }
 
-    #app.light #version {
-      background: rgba(255,255,255,0.4);
-      color: rgba(20,20,50,0.9);
-    }
+    #app.light #version { color: rgba(0,0,20,0.2); }
 
     /* Theme toggle */
     #theme-toggle {
