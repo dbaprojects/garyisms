@@ -120,10 +120,10 @@
       text-shadow: 0 1px 3px rgba(255,255,255,0.5);
     }
 
-    /* Tap hint pill */
+    /* Tap hint pill — centred in the bottom decorative strip */
     #hint {
       position: absolute;
-      bottom: 3%;
+      bottom: 4%;
       left: 50%;
       transform: translateX(-50%);
       white-space: nowrap;
@@ -160,11 +160,10 @@
 
     #app.light #version { color: rgba(0,0,20,0.2); }
 
-    /* Theme toggle */
-    #theme-toggle {
+    /* Shared pill toggle styles — used by both controls */
+    .ctrl-toggle {
       position: absolute;
-      top: 14px;
-      right: 14px;
+      bottom: 11%;
       z-index: 10;
       display: flex;
       align-items: center;
@@ -179,14 +178,18 @@
       transition: background 0.4s ease, border-color 0.4s ease;
     }
 
-    #app.light #theme-toggle {
+    #app.light .ctrl-toggle {
       background: rgba(255,255,255,0.5);
       border-color: rgba(0,0,0,0.12);
     }
 
-    #theme-toggle:active { opacity: 0.7; }
+    .ctrl-toggle:active { opacity: 0.7; }
 
-    .tgl-label {
+    #filter-toggle { left: 12px; }
+    #theme-toggle  { right: 12px; }
+
+    /* Toggle label base */
+    .tgl-label, .ftgl-label {
       font-family: sans-serif;
       font-size: 10px;
       font-weight: 700;
@@ -196,88 +199,27 @@
       transition: color 0.3s ease;
     }
 
+    /* Theme labels */
     #app.dark  .tgl-label.dark  { color: rgba(255,255,255,0.95); }
     #app.light .tgl-label.light { color: rgba(20,20,50,0.95); }
     #app.light .tgl-label.dark  { color: rgba(20,20,50,0.35); }
 
-    .tgl-pill {
-      width: 32px;
-      height: 18px;
-      border-radius: 9px;
-      background: rgba(255,255,255,0.2);
-      position: relative;
-      transition: background 0.3s ease;
-      flex-shrink: 0;
-    }
-
-    #app.light .tgl-pill { background: rgba(20,20,50,0.15); }
-
-    .tgl-pill::after {
-      content: '';
-      position: absolute;
-      width: 12px;
-      height: 12px;
-      border-radius: 50%;
-      background: #fff;
-      top: 3px; left: 3px;
-      transition: transform 0.3s ease, background 0.3s ease;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.3);
-    }
-
-    #app.light .tgl-pill::after {
-      transform: translateX(14px);
-      background: #1a1a2e;
-    }
-
-    /* Filter toggle */
-    #filter-toggle {
-      position: absolute;
-      top: 14px;
-      left: 14px;
-      z-index: 10;
-      display: flex;
-      align-items: center;
-      gap: 7px;
-      padding: 5px 9px;
-      border-radius: 999px;
-      cursor: pointer;
-      background: rgba(0,0,0,0.35);
-      border: 1px solid rgba(255,255,255,0.2);
-      backdrop-filter: blur(6px);
-      -webkit-backdrop-filter: blur(6px);
-      transition: background 0.4s ease, border-color 0.4s ease;
-    }
-
-    #app.light #filter-toggle {
-      background: rgba(255,255,255,0.5);
-      border-color: rgba(0,0,0,0.12);
-    }
-
-    #filter-toggle:active { opacity: 0.7; }
-
-    .ftgl-label {
-      font-family: sans-serif;
-      font-size: 10px;
-      font-weight: 700;
-      letter-spacing: 1px;
-      text-transform: uppercase;
-      color: rgba(255,255,255,0.45);
-      transition: color 0.3s ease;
-    }
-
-    /* default (all mode): "All" is active */
-    #app      .ftgl-label.all { color: rgba(255,255,255,0.95); }
-    #app      .ftgl-label.gaz { color: rgba(255,255,255,0.45); }
-    /* gaz mode: "Gaz" is active */
+    /* Filter labels — default (gaz mode on) */
+    #app      .ftgl-label.all { color: rgba(255,255,255,0.45); }
+    #app      .ftgl-label.gaz { color: rgba(255,255,255,0.95); }
     #app.gaz  .ftgl-label.all { color: rgba(255,255,255,0.45); }
     #app.gaz  .ftgl-label.gaz { color: rgba(255,255,255,0.95); }
+    /* all mode */
+    #app.all  .ftgl-label.all { color: rgba(255,255,255,0.95); }
+    #app.all  .ftgl-label.gaz { color: rgba(255,255,255,0.45); }
     /* light theme overrides */
-    #app.light      .ftgl-label.all { color: rgba(20,20,50,0.95); }
-    #app.light      .ftgl-label.gaz { color: rgba(20,20,50,0.35); }
-    #app.light.gaz  .ftgl-label.all { color: rgba(20,20,50,0.35); }
-    #app.light.gaz  .ftgl-label.gaz { color: rgba(20,20,50,0.95); }
+    #app.light      .ftgl-label.all { color: rgba(20,20,50,0.35); }
+    #app.light      .ftgl-label.gaz { color: rgba(20,20,50,0.95); }
+    #app.light.all  .ftgl-label.all { color: rgba(20,20,50,0.95); }
+    #app.light.all  .ftgl-label.gaz { color: rgba(20,20,50,0.35); }
 
-    .ftgl-pill {
+    /* Shared pill */
+    .tgl-pill, .ftgl-pill {
       width: 32px;
       height: 18px;
       border-radius: 9px;
@@ -287,8 +229,10 @@
       flex-shrink: 0;
     }
 
+    #app.light .tgl-pill,
     #app.light .ftgl-pill { background: rgba(20,20,50,0.15); }
 
+    .tgl-pill::after,
     .ftgl-pill::after {
       content: '';
       position: absolute;
@@ -301,23 +245,31 @@
       box-shadow: 0 1px 3px rgba(0,0,0,0.3);
     }
 
-    #app.gaz .ftgl-pill::after { transform: translateX(14px); }
+    /* theme pill: dark=left, light=right */
+    #app.light .tgl-pill::after {
+      transform: translateX(14px);
+      background: #1a1a2e;
+    }
+
+    /* filter pill: gaz=right (default), all=left */
+    #app      .ftgl-pill::after { transform: translateX(14px); }
+    #app.all  .ftgl-pill::after { transform: translateX(0); }
     #app.light .ftgl-pill::after { background: #1a1a2e; }
   </style>
 </head>
 <body>
-<div id="app" class="light">
+<div id="app" class="light gaz">
 
   <img id="bg-dark-img"  src="bg1.png" alt="">
   <img id="bg-light-img" src="bg2.png" alt="">
 
-  <div id="filter-toggle">
+  <div id="filter-toggle" class="ctrl-toggle">
     <span class="ftgl-label all">All</span>
     <div class="ftgl-pill"></div>
     <span class="ftgl-label gaz">Gaz</span>
   </div>
 
-  <div id="theme-toggle">
+  <div id="theme-toggle" class="ctrl-toggle">
     <span class="tgl-label dark">Dark</span>
     <div class="tgl-pill"></div>
     <span class="tgl-label light">Light</span>
@@ -331,7 +283,7 @@
   </div>
 
   <p id="hint">tap for another</p>
-  <span id="version">v1.8</span>
+  <span id="version">v1.9</span>
 
 </div>
 <script>
@@ -400,7 +352,47 @@
     { text: "You have a unique way of contributing without adding much.", attr: "Anon" },
     { text: "You have a special way of speaking that makes people appreciate your silence", attr: "Anon" },
     { text: "You're not wrong, you're just operating in a different intellectual time zone.", attr: "Anon" },
-    { text: "Intelligence seeks you, but you appear to be a master at hiding.", attr: "Anon" }
+    { text: "Intelligence seeks you, but you appear to be a master at hiding.", attr: "Anon" },
+    { text: "You're doing your best. I can tell.", attr: "Anon" },
+    { text: "That's certainly a way to look at it.", attr: "Anon" },
+    { text: "I'd never have thought of that, and I've had time.", attr: "Anon" },
+    { text: "You're not for everyone. Or, as it turns out, anyone.", attr: "Anon" },
+    { text: "It's nice that you have opinions.", attr: "Anon" },
+    { text: "I see you've given this no thought at all.", attr: "Anon" },
+    { text: "You tried. That's the part I want to acknowledge.", attr: "Anon" },
+    { text: "Most people would be embarrassed. You've avoided that.", attr: "Anon" },
+    { text: "You've really committed to this version of yourself.", attr: "Anon" },
+    { text: "I won't pretend I followed that.", attr: "Anon" },
+    { text: "There's a confidence to being that wrong. I noticed it.", attr: "Anon" },
+    { text: "You said a lot. I'll give you that.", attr: "Anon" },
+    { text: "Not everyone could have missed the point so completely.", attr: "Anon" },
+    { text: "It's a bold choice, having no point.", attr: "Anon" },
+    { text: "I'm sure that made sense somewhere.", attr: "Anon" },
+    { text: "You've never been weighed down by knowing things.", attr: "Anon" },
+    { text: "That's good. For you.", attr: "Anon" },
+    { text: "I can see you believe that.", attr: "Anon" },
+    { text: "You've got a lot to be modest about.", attr: "Anon" },
+    { text: "I'll think about that. Briefly.", attr: "Anon" },
+    { text: "You bring people together, mostly to discuss what you just said.", attr: "Anon" },
+    { text: "I'd agree with you, but then we'd both be wrong.", attr: "Anon" },
+    { text: "You have an answer for everything, just rarely the right one.", attr: "Anon" },
+    { text: "It's not that you're slow — you just arrive at conclusions by scenic route.", attr: "Anon" },
+    { text: "You should write a book. The world deserves to know how little is required.", attr: "Anon" },
+    { text: "Your confidence is inspiring. Your accuracy, less so.", attr: "Anon" },
+    { text: "I've met few people with so much to say and so little reason to.", attr: "Anon" },
+    { text: "You're proof that effort and results are entirely separate things.", attr: "Anon" },
+    { text: "Don't worry about being misunderstood — being understood would be worse.", attr: "Anon" },
+    { text: "You've never met a fact you couldn't walk straight past.", attr: "Anon" },
+    { text: "I always learn something talking to you, usually about my own patience.", attr: "Anon" },
+    { text: "You're a wonderful listener, in the sense that nothing gets in.", attr: "Anon" },
+    { text: "There's no question too simple for you to overthink and still miss.", attr: "Anon" },
+    { text: "You have the rare gift of making experts doubt the value of expertise.", attr: "Anon" },
+    { text: "Every time you open your mouth, the bar relocates.", attr: "Anon" },
+    { text: "You're not the dimmest person I've met, but you're certainly in the running, and gaining.", attr: "Anon" },
+    { text: "I admire your consistency — wrong, but never in doubt.", attr: "Anon" },
+    { text: "You've turned \"winging it\" into a lifestyle, and a tragedy.", attr: "Anon" },
+    { text: "Talking to you is like reading a map drawn from memory by someone who's never left home.", attr: "Anon" },
+    { text: "You always give one hundred percent — it's just rarely of anything useful.", attr: "Anon" }
   ];
 
   const app         = document.getElementById('app');
@@ -421,9 +413,9 @@
   }
 
   function getPool() {
-    return app.classList.contains('gaz')
-      ? quotes.filter(q => q.attr === 'Gaz')
-      : quotes;
+    return app.classList.contains('all')
+      ? quotes
+      : quotes.filter(q => q.attr === 'Gaz');
   }
 
   function pickNext() {
@@ -495,6 +487,7 @@
   filterBtn.addEventListener('click', e => {
     e.stopPropagation();
     app.classList.toggle('gaz');
+    app.classList.toggle('all');
     deck = [];
     showQuote();
   });
