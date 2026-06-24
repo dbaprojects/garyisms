@@ -37,9 +37,7 @@
       -webkit-user-select: none;
     }
 
-    /* Full-bleed background images */
-    #bg-dark-img,
-    #bg-light-img {
+    #bg-img {
       position: absolute;
       top: 0; left: 0;
       width: 100%; height: 100%;
@@ -48,35 +46,19 @@
       pointer-events: none;
     }
 
-    #bg-light-img {
-      opacity: 0;
-      transition: opacity 0.5s ease;
-    }
-
-    #app.light #bg-light-img { opacity: 1; }
-
-    /* Quote zone — positioned over each background's content area */
+    /* Quote zone — inside the speech bubble */
     #quote-zone {
       position: absolute;
       left: 19%;
       right: 19%;
-      top: 50%;
-      bottom: 17%;
+      top: 48%;
+      bottom: 19%;
       display: flex;
       align-items: center;
       justify-content: center;
       overflow: hidden;
-      transition: top 0.5s ease, left 0.5s ease, right 0.5s ease, bottom 0.5s ease;
     }
 
-    #app.light #quote-zone {
-      top: 48%;
-      bottom: 19%;
-      left: 19%;
-      right: 19%;
-    }
-
-    /* Quote + attribution block — font-size set by fitText() */
     #quote-block {
       width: 100%;
       max-width: 100%;
@@ -94,12 +76,6 @@
       text-align: center;
       overflow-wrap: break-word;
       word-break: break-word;
-      color: #f0ebe0;
-      text-shadow: 0 2px 8px rgba(0,0,0,0.85), 0 0 24px rgba(0,0,0,0.5);
-      transition: color 0.4s ease, text-shadow 0.4s ease;
-    }
-
-    #app.light #quote {
       color: #1a1a2e;
       text-shadow: 0 1px 3px rgba(255,255,255,0.5);
     }
@@ -110,131 +86,73 @@
       font-style: italic;
       text-align: right;
       margin-top: 0.6em;
-      color: #f0ebe0;
-      text-shadow: 0 2px 8px rgba(0,0,0,0.85);
-      transition: color 0.4s ease, text-shadow 0.4s ease;
-    }
-
-    #app.light #attr {
       color: #1a1a2e;
       text-shadow: 0 1px 3px rgba(255,255,255,0.5);
     }
 
-    /* Bottom bar — single row holding all three controls */
-    #bottom-bar {
+    /* "tap for another" — styled text in the blue decorative strip */
+    #hint {
       position: absolute;
-      bottom: 3%;
-      left: 3%;
-      right: 3%;
+      bottom: 8%;
+      left: 0; right: 0;
+      text-align: center;
+      font-family: 'Georgia', serif;
+      font-style: italic;
+      font-size: clamp(12px, 3.2vw, 15px);
+      color: rgba(255,255,255,0.92);
+      text-shadow: 0 1px 4px rgba(0,0,0,0.4);
+      letter-spacing: 0.5px;
+      pointer-events: none;
+    }
+
+    /* Filter toggle — centred in the blue strip */
+    #filter-toggle {
+      position: absolute;
+      bottom: 2.5%;
+      left: 50%;
+      transform: translateX(-50%);
       z-index: 10;
       display: flex;
       align-items: center;
-      justify-content: space-between;
-    }
-
-    /* Tap hint pill */
-    #hint {
-      white-space: nowrap;
-      font-family: sans-serif;
-      font-size: clamp(9px, 2.2vw, 11px);
-      letter-spacing: 1.5px;
-      text-transform: uppercase;
-      pointer-events: none;
-      background: rgba(0,0,0,0.28);
-      color: rgba(255,255,255,0.8);
-      padding: 5px 12px;
-      border-radius: 999px;
-      backdrop-filter: blur(4px);
-      -webkit-backdrop-filter: blur(4px);
-      transition: background 0.4s ease, color 0.4s ease;
-    }
-
-    #app.light #hint {
-      background: rgba(255,255,255,0.4);
-      color: rgba(20,20,50,0.8);
-    }
-
-    /* Version badge */
-    #version {
-      position: absolute;
-      bottom: 4px;
-      right: 8px;
-      font-family: monospace;
-      font-size: 9px;
-      color: rgba(255,255,255,0.2);
-      pointer-events: none;
-      letter-spacing: 0.5px;
-    }
-
-    #app.light #version { color: rgba(0,0,20,0.15); }
-
-    /* Toggle pill controls */
-    .ctrl-toggle {
-      display: flex;
-      align-items: center;
       gap: 7px;
-      padding: 5px 9px;
+      padding: 5px 11px;
       border-radius: 999px;
       cursor: pointer;
-      background: rgba(0,0,0,0.35);
-      border: 1px solid rgba(255,255,255,0.2);
+      background: rgba(0,0,0,0.25);
+      border: 1px solid rgba(255,255,255,0.35);
       backdrop-filter: blur(6px);
       -webkit-backdrop-filter: blur(6px);
-      transition: background 0.4s ease, border-color 0.4s ease;
+      white-space: nowrap;
     }
 
-    #app.light .ctrl-toggle {
-      background: rgba(255,255,255,0.5);
-      border-color: rgba(0,0,0,0.12);
-    }
+    #filter-toggle:active { opacity: 0.7; }
 
-    .ctrl-toggle:active { opacity: 0.7; }
-
-    /* Toggle label base */
-    .tgl-label, .ftgl-label {
+    .ftgl-label {
       font-family: sans-serif;
       font-size: 10px;
       font-weight: 700;
       letter-spacing: 1px;
       text-transform: uppercase;
-      color: rgba(255,255,255,0.45);
       transition: color 0.3s ease;
     }
 
-    /* Theme labels */
-    #app.dark  .tgl-label.dark  { color: rgba(255,255,255,0.95); }
-    #app.light .tgl-label.light { color: rgba(20,20,50,0.95); }
-    #app.light .tgl-label.dark  { color: rgba(20,20,50,0.35); }
+    /* default = gaz mode: "Just Gaz" bright, "All" dim */
+    .ftgl-label.all { color: rgba(255,255,255,0.4); }
+    .ftgl-label.gaz { color: rgba(255,255,255,0.95); }
 
-    /* Filter labels — default (gaz mode on) */
-    #app      .ftgl-label.all { color: rgba(255,255,255,0.45); }
-    #app      .ftgl-label.gaz { color: rgba(255,255,255,0.95); }
-    #app.gaz  .ftgl-label.all { color: rgba(255,255,255,0.45); }
-    #app.gaz  .ftgl-label.gaz { color: rgba(255,255,255,0.95); }
-    /* all mode */
-    #app.all  .ftgl-label.all { color: rgba(255,255,255,0.95); }
-    #app.all  .ftgl-label.gaz { color: rgba(255,255,255,0.45); }
-    /* light theme overrides */
-    #app.light      .ftgl-label.all { color: rgba(20,20,50,0.35); }
-    #app.light      .ftgl-label.gaz { color: rgba(20,20,50,0.95); }
-    #app.light.all  .ftgl-label.all { color: rgba(20,20,50,0.95); }
-    #app.light.all  .ftgl-label.gaz { color: rgba(20,20,50,0.35); }
+    #app.all .ftgl-label.all { color: rgba(255,255,255,0.95); }
+    #app.all .ftgl-label.gaz { color: rgba(255,255,255,0.4); }
 
-    /* Shared pill */
-    .tgl-pill, .ftgl-pill {
+    .ftgl-pill {
       width: 32px;
       height: 18px;
       border-radius: 9px;
-      background: rgba(255,255,255,0.2);
+      background: rgba(255,255,255,0.25);
       position: relative;
       transition: background 0.3s ease;
       flex-shrink: 0;
     }
 
-    #app.light .tgl-pill,
-    #app.light .ftgl-pill { background: rgba(20,20,50,0.15); }
-
-    .tgl-pill::after,
     .ftgl-pill::after {
       content: '';
       position: absolute;
@@ -243,41 +161,31 @@
       border-radius: 50%;
       background: #fff;
       top: 3px; left: 3px;
-      transition: transform 0.3s ease, background 0.3s ease;
+      transition: transform 0.3s ease;
       box-shadow: 0 1px 3px rgba(0,0,0,0.3);
     }
 
-    /* theme pill: dark=left, light=right */
-    #app.light .tgl-pill::after {
-      transform: translateX(14px);
-      background: #1a1a2e;
-    }
-
-    /* filter pill: gaz=right (default), all=left */
+    /* gaz = pill right; all = pill left */
     #app      .ftgl-pill::after { transform: translateX(14px); }
     #app.all  .ftgl-pill::after { transform: translateX(0); }
-    #app.light .ftgl-pill::after { background: #1a1a2e; }
+
+    /* Version badge */
+    #version {
+      position: absolute;
+      bottom: 4px;
+      right: 8px;
+      font-family: monospace;
+      font-size: 9px;
+      color: rgba(0,0,20,0.15);
+      pointer-events: none;
+      letter-spacing: 0.5px;
+    }
   </style>
 </head>
 <body>
-<div id="app" class="light gaz">
+<div id="app" class="gaz">
 
-  <img id="bg-dark-img"  src="bg1.png" alt="">
-  <img id="bg-light-img" src="bg2.png" alt="">
-
-  <div id="bottom-bar">
-    <div id="filter-toggle" class="ctrl-toggle">
-      <span class="ftgl-label all">All</span>
-      <div class="ftgl-pill"></div>
-      <span class="ftgl-label gaz">Gaz</span>
-    </div>
-    <p id="hint">tap for another</p>
-    <div id="theme-toggle" class="ctrl-toggle">
-      <span class="tgl-label dark">Dark</span>
-      <div class="tgl-pill"></div>
-      <span class="tgl-label light">Light</span>
-    </div>
-  </div>
+  <img id="bg-img" src="bg2.png" alt="">
 
   <div id="quote-zone">
     <div id="quote-block">
@@ -286,11 +194,20 @@
     </div>
   </div>
 
-  <span id="version">v2.1</span>
+  <p id="hint">— tap for another —</p>
+
+  <div id="filter-toggle">
+    <span class="ftgl-label all">All</span>
+    <div class="ftgl-pill"></div>
+    <span class="ftgl-label gaz">Just Gaz</span>
+  </div>
+
+  <span id="version">v2.2</span>
 
 </div>
 <script>
   const quotes = [
+    // --- Gaz ---
     { text: "Like a split chilli between the bum cheeks", attr: "Gaz" },
     { text: "A tram could run up his ass and he wouldn't notice until the people got out", attr: "Gaz" },
     { text: "Just another version of corporate tunnel ball in a different country", attr: "Gaz" },
@@ -324,6 +241,40 @@
     { text: "It's like trying to poo down a straw", attr: "Gaz" },
     { text: "It's like trying to pass an elephant (eyes squinting as he says this)", attr: "Gaz" },
     { text: "I don't give a frog's knob what you've got in there.", attr: "Gaz" },
+    { text: "Useful as a screen door on a submarine.", attr: "Gaz" },
+    { text: "Busier than a cat burying turds on a marble floor.", attr: "Gaz" },
+    { text: "About as welcome as a fart in a spacesuit.", attr: "Gaz" },
+    { text: "Like watching two bald men fight over a comb.", attr: "Gaz" },
+    { text: "Mate, that idea's got more holes than a colander made of doughnuts.", attr: "Gaz" },
+    { text: "He's all hat and no cattle, and the hat's borrowed.", attr: "Gaz" },
+    { text: "He's got the brains of a glovebox.", attr: "Gaz" },
+    { text: "Couldn't find a grand piano in a one-room flat.", attr: "Gaz" },
+    { text: "Useful as a chocolate teapot full of someone else's piss.", attr: "Gaz" },
+    { text: "He's so dim you could read by the dark coming off him.", attr: "Gaz" },
+    { text: "Tighter than a nun's nasty at a sailors' reunion.", attr: "Gaz" },
+    { text: "He couldn't pour piss out of a boot with the instructions on the heel.", attr: "Gaz" },
+    { text: "Busier than a one-armed bricklayer in Baghdad.", attr: "Gaz" },
+    { text: "He's got a head like a half-sucked mango.", attr: "Gaz" },
+    { text: "Couldn't get laid in a brothel with a fistful of fifties and a note from his mum.", attr: "Gaz" },
+    { text: "He's so useless his own shadow's looking for a transfer.", attr: "Gaz" },
+    { text: "Happier than a dog with two dicks at a lamppost convention.", attr: "Gaz" },
+    { text: "About as sharp as the bottom end of a wet sock.", attr: "Gaz" },
+    { text: "Like trying to put socks on an octopus that owes you money.", attr: "Gaz" },
+    { text: "He's the human equivalent of a participation trophy.", attr: "Gaz" },
+    { text: "He couldn't find his own arse with both hands, a torch, and a search party.", attr: "Gaz" },
+    { text: "Busier than a hooker working double shifts at a sailors' funeral.", attr: "Gaz" },
+    { text: "About as much use as a fishnet condom.", attr: "Gaz" },
+    { text: "Like watching a fat kid chase a sausage downhill — nothing's stopping it, nothing's catching it.", attr: "Gaz" },
+    { text: "Couldn't run a bath without a manual and adult supervision.", attr: "Gaz" },
+    { text: "About as welcome as a turd in a swimming pool.", attr: "Gaz" },
+    { text: "Tighter than two coats of paint, and half as useful.", attr: "Gaz" },
+    { text: "He's so far up his own arse he can wave at his tonsil.", attr: "Gaz" },
+    { text: "He's got a head like a busted blister and the charm to match.", attr: "Gaz" },
+    { text: "He's the reason warning labels mention not eating the sachet.", attr: "Gaz" },
+    { text: "Happier than a dog rolling in something the council's been warned about.", attr: "Gaz" },
+    { text: "He's got all the depth of a teaspoon and twice the wobble.", attr: "Gaz" },
+    { text: "Sweating like a gypsy with a mortgage.", attr: "Gaz" },
+    // --- Anon ---
     { text: "Don't let my knowledge get in the way of your confidence", attr: "Anon" },
     { text: "I admire your courage to speak in the absence of knowledge", attr: "Anon" },
     { text: "I'm jealous of everyone that hasn't met you", attr: "Anon" },
@@ -396,54 +347,20 @@
     { text: "You've turned \"winging it\" into a lifestyle, and a tragedy.", attr: "Anon" },
     { text: "Talking to you is like reading a map drawn from memory by someone who's never left home.", attr: "Anon" },
     { text: "You always give one hundred percent — it's just rarely of anything useful.", attr: "Anon" },
-    { text: "Useful as a screen door on a submarine.", attr: "Anon" },
-    { text: "Busier than a cat burying turds on a marble floor.", attr: "Anon" },
-    { text: "About as welcome as a fart in a spacesuit.", attr: "Anon" },
-    { text: "Like watching two bald men fight over a comb.", attr: "Anon" },
-    { text: "Mate, that idea's got more holes than a colander made of doughnuts.", attr: "Anon" },
-    { text: "He's all hat and no cattle, and the hat's borrowed.", attr: "Anon" },
     { text: "Like trying to herd cats through a car wash.", attr: "Anon" },
     { text: "He's so tight he wouldn't shout if a shark bit him.", attr: "Anon" },
-    { text: "He's got the brains of a glovebox.", attr: "Anon" },
-    { text: "Couldn't find a grand piano in a one-room flat.", attr: "Anon" },
-    { text: "Useful as a chocolate teapot full of someone else's piss.", attr: "Anon" },
-    { text: "He's so dim you could read by the dark coming off him.", attr: "Anon" },
-    { text: "Tighter than a nun's nasty at a sailors' reunion.", attr: "Anon" },
-    { text: "He couldn't pour piss out of a boot with the instructions on the heel.", attr: "Anon" },
-    { text: "Busier than a one-armed bricklayer in Baghdad.", attr: "Anon" },
-    { text: "He's got a head like a half-sucked mango.", attr: "Anon" },
-    { text: "Couldn't get laid in a brothel with a fistful of fifties and a note from his mum.", attr: "Anon" },
-    { text: "He's so useless his own shadow's looking for a transfer.", attr: "Anon" },
-    { text: "Happier than a dog with two dicks and a lamppost convention.", attr: "Anon" },
-    { text: "About as sharp as the bottom end of a wet sock.", attr: "Anon" },
-    { text: "Like trying to put socks on an octopus that owes you money.", attr: "Anon" },
-    { text: "He's the human equivalent of a participation trophy that came last.", attr: "Anon" },
-    { text: "He couldn't find his own arse with both hands, a torch, and a search party.", attr: "Anon" },
     { text: "Like trying to shovel smoke with a fork.", attr: "Anon" },
     { text: "He's got a face only a blind midwife could love.", attr: "Anon" },
-    { text: "Busier than a hooker working two shifts at a sailors' funeral.", attr: "Anon" },
-    { text: "About as much use as a fishnet condom.", attr: "Anon" },
-    { text: "Like watching a fat kid chase a sausage downhill — nothing's stopping it, nothing's catching it.", attr: "Anon" },
     { text: "He's so thick light bends around him to avoid the conversation.", attr: "Anon" },
-    { text: "Couldn't run a bath without a manual and adult supervision.", attr: "Anon" },
     { text: "He's the reason the gene pool needs a lifeguard.", attr: "Anon" },
-    { text: "Happier than a rat in a sewage main with a packed lunch.", attr: "Anon" },
-    { text: "About as welcome as a turd in a swimming pool.", attr: "Anon" },
-    { text: "Tighter than two coats of paint, and half as useful.", attr: "Anon" },
-    { text: "He's so far up his own arse he can wave at his tonsil.", attr: "Anon" },
-    { text: "He's got a head like a busted blister and the charm to match.", attr: "Anon" },
-    { text: "He's the reason warning labels mention not eating the sachet.", attr: "Anon" },
-    { text: "Happier than a dog rolling in something the council's been warned about.", attr: "Anon" },
-    { text: "He's got all the depth of a teaspoon and twice the wobble.", attr: "Anon" },
-    { text: "Sweating like a gypsy with a mortgage.", attr: "Anon" }
+    { text: "Happier than a rat in a sewage main with a packed lunch.", attr: "Anon" }
   ];
 
-  const app         = document.getElementById('app');
-  const quoteEl    = document.getElementById('quote');
-  const attrEl     = document.getElementById('attr');
+  const app        = document.getElementById('app');
+  const quoteEl   = document.getElementById('quote');
+  const attrEl    = document.getElementById('attr');
   const quoteBlock = document.getElementById('quote-block');
   const quoteZone  = document.getElementById('quote-zone');
-  const toggle     = document.getElementById('theme-toggle');
   const filterBtn  = document.getElementById('filter-toggle');
 
   let deck = [];
@@ -470,7 +387,6 @@
     return pool[deck.pop()];
   }
 
-  // Scale font until the block fits in both dimensions
   function fitText() {
     const zoneH = quoteZone.clientHeight;
     const zoneW = quoteZone.clientWidth;
@@ -498,31 +414,16 @@
     }, 300);
   }
 
-  // Initial quote
   (function() {
     const q = pickNext();
     quoteEl.textContent = q.text;
     attrEl.textContent = '— ' + q.attr;
   })();
 
-  // ResizeObserver fires when zone gets real dimensions; double rAF for paint
   new ResizeObserver(() => {
     requestAnimationFrame(() => requestAnimationFrame(fitText));
   }).observe(quoteZone);
 
-  // Theme toggle
-  toggle.addEventListener('touchstart', e => {
-    e.stopPropagation();
-  }, { passive: true });
-
-  toggle.addEventListener('click', e => {
-    e.stopPropagation();
-    app.classList.toggle('dark');
-    app.classList.toggle('light');
-    setTimeout(fitText, 520);
-  });
-
-  // Filter toggle
   filterBtn.addEventListener('touchstart', e => {
     e.stopPropagation();
   }, { passive: true });
