@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <title>Garyisms</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    html, body {
+      height: 100%;
+      background: #000;
+    }
+
+    body {
+      display: flex;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    #app {
+      position: relative;
+      width: 100%;
+      max-width: 941px;
+      height: 100vh;
+      overflow: hidden;
+      cursor: pointer;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+
+    /* Full-bleed background images */
+    #bg-dark-img,
+    #bg-light-img {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      object-fit: cover;
+      object-position: center top;
+      display: block;
+      pointer-events: none;
+    }
+
+    #bg-light-img {
+      opacity: 0;
+      transition: opacity 0.5s ease;
+    }
+
+    #app.light #bg-light-img { opacity: 1; }
+
+    /* Quote zone */
+    #quote-zone {
+      position: absolute;
+      left: 10%;
+      right: 10%;
+      top: 49%;
+      bottom: 15%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: top 0.5s ease, left 0.5s ease, right 0.5s ease, bottom 0.5s ease;
+    }
+
+    #app.light #quote-zone {
+      top: 43%;
+      bottom: 14%;
+      left: 13%;
+      right: 13%;
+    }
+
+    #quote {
+      font-family: 'Georgia', serif;
+      line-height: 1.6;
+      text-align: center;
+      color: #f0ebe0;
+      text-shadow: 0 2px 8px rgba(0,0,0,0.85), 0 0 24px rgba(0,0,0,0.5);
+      transition: opacity 0.3s ease, color 0.4s ease, text-shadow 0.4s ease;
+    }
+
+    #app.light #quote {
+      color: #1a1a2e;
+      text-shadow: 0 1px 4px rgba(255,255,255,0.6);
+    }
+
+    #quote.fade { opacity: 0; }
+
+    /* Tap hint */
+    #hint {
+      position: absolute;
+      bottom: 10px;
+      left: 0; right: 0;
+      text-align: center;
+      font-family: sans-serif;
+      font-size: clamp(9px, 2.4vw, 11px);
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      pointer-events: none;
+      color: rgba(255,255,255,0.35);
+      transition: color 0.4s ease;
+    }
+
+    #app.light #hint { color: rgba(20,20,50,0.4); }
+
+    /* Theme toggle */
+    #theme-toggle {
+      position: absolute;
+      top: 14px;
+      right: 14px;
+      z-index: 10;
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      padding: 5px 9px;
+      border-radius: 999px;
+      cursor: pointer;
+      background: rgba(0,0,0,0.35);
+      border: 1px solid rgba(255,255,255,0.2);
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+      transition: background 0.4s ease, border-color 0.4s ease;
+    }
+
+    #app.light #theme-toggle {
+      background: rgba(255,255,255,0.5);
+      border-color: rgba(0,0,0,0.12);
+    }
+
+    #theme-toggle:active { opacity: 0.7; }
+
+    .tgl-label {
+      font-family: sans-serif;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.45);
+      transition: color 0.3s ease;
+    }
+
+    #app.dark  .tgl-label.dark  { color: rgba(255,255,255,0.95); }
+    #app.light .tgl-label.light { color: rgba(20,20,50,0.95); }
+    #app.light .tgl-label.dark  { color: rgba(20,20,50,0.35); }
+
+    .tgl-pill {
+      width: 32px;
+      height: 18px;
+      border-radius: 9px;
+      background: rgba(255,255,255,0.2);
+      position: relative;
+      transition: background 0.3s ease;
+      flex-shrink: 0;
+    }
+
+    #app.light .tgl-pill { background: rgba(20,20,50,0.15); }
+
+    .tgl-pill::after {
+      content: '';
+      position: absolute;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: #fff;
+      top: 3px; left: 3px;
+      transition: transform 0.3s ease, background 0.3s ease;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+    }
+
+    #app.light .tgl-pill::after {
+      transform: translateX(14px);
+      background: #1a1a2e;
+    }
+  </style>
+</head>
+<body>
+<div id="app" class="light">
+
+  <img id="bg-dark-img"  src="bg1.png" alt="">
+  <img id="bg-light-img" src="bg2.png" alt="">
+
+  <div id="theme-toggle">
+    <span class="tgl-label dark">Dark</span>
+    <div class="tgl-pill"></div>
+    <span class="tgl-label light">Light</span>
+  </div>
+
+  <div id="quote-zone">
+    <p id="quote"></p>
+  </div>
+
+  <p id="hint">tap anywhere for another</p>
+
+</div>
+<script>
+  const quotes = [
+    "Like a split chilli between the bum cheeks",
+    "A tram could run up his ass and he wouldn't notice until the people got out",
+    "Just another version of corporate tunnel ball in a different country",
+    "It's like trying to get a flat kid to run fast",
+    "Like three cats fighting for position in a flour bag",
+    "He should get a job blowing balloons at parties.",
+    "It's like pushing a huge turd up a hill with your chin",
+    "I wouldn't trust you to sit right on a toilet seat",
+    "You're the reason people immigrate to other countries",
+    "We're currently doing a work-exchange program with lifers at Changi Prison, and they can't wait to go back",
+    "Can you just quickly update CRM? Yeah, it's like saying \"Yeah, can you quickly count the bricks in the Great Wall of China?\"",
+    "We're so close you can smell it. It just doesn't smell very good.",
+    "Happier than a one legged lesbian on a pogo stick",
+    "It's time I'll never get back and it's of no value to me. It's like scratching someone else's itch…",
+    "I'm the only hang down in a front bum family",
+    "Less is more… unless it's beer",
+    "Like trying to set up a snowfield in the Sahara",
+    "As the man said, you can't pick up a turd from the clean end",
+    "He's so happy you'd think he'd been kissed on the dick by a fairy",
+    "Always marry your second wife first",
+    "Hey – when you take your thumb out of your bum, stick it in your mouth why don't you?",
+    "He's like an ugg boot on a camel",
+    "Busier than a one legged man in an arse kicking contest",
+    "It's like rubbing sand into tinea",
+    "He could be useful if you coated him in concrete and used him as a speed hump",
+    "I gave it up… right after sex with pigs",
+    "You can't do that… you can't put the poo back in…",
+    "That's \"the cloud\"… not a fart",
+    "Don't do anything I wouldn't watch",
+    "New Zealand – they haven't worked since 1986, they were so disappointed they didn't get the Olympics back then but apparently you had to have electricity…",
+    "It's like trying to poo down a straw",
+    "It's like trying to pass an elephant (eyes squinting as he says this)",
+    "I don't give a frog's knob what you've got in there."
+  ];
+
+  const app       = document.getElementById('app');
+  const quoteEl   = document.getElementById('quote');
+  const quoteZone = document.getElementById('quote-zone');
+  const toggle    = document.getElementById('theme-toggle');
+
+  let deck = [];
+
+  function shuffle(arr) {
+    for (let i = arr.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+  }
+
+  function pickNext() {
+    if (!deck.length) {
+      deck = quotes.map((_, i) => i);
+      shuffle(deck);
+    }
+    return quotes[deck.pop()];
+  }
+
+  function fitText() {
+    const maxPx = 30, minPx = 11;
+    const available = quoteZone.clientHeight - 20;
+    let size = maxPx;
+    quoteEl.style.fontSize = size + 'px';
+    while (quoteEl.scrollHeight > available && size > minPx) {
+      size -= 0.5;
+      quoteEl.style.fontSize = size + 'px';
+    }
+  }
+
+  function showQuote() {
+    quoteEl.classList.add('fade');
+    setTimeout(() => {
+      quoteEl.textContent = pickNext();
+      quoteEl.classList.remove('fade');
+      fitText();
+    }, 300);
+  }
+
+  // Defer first render until layout is complete
+  requestAnimationFrame(() => {
+    quoteEl.textContent = pickNext();
+    fitText();
+  });
+
+  toggle.addEventListener('touchstart', e => {
+    e.stopPropagation(); // prevent bubbling to app's touchstart (which would eat the click)
+  }, { passive: true });
+
+  toggle.addEventListener('click', e => {
+    e.stopPropagation();
+    app.classList.toggle('dark');
+    app.classList.toggle('light');
+    setTimeout(fitText, 520);
+  });
+
+  let touchFired = false;
+  app.addEventListener('touchstart', e => {
+    e.preventDefault();
+    touchFired = true;
+    showQuote();
+  }, { passive: false });
+  app.addEventListener('click', () => {
+    if (!touchFired) showQuote();
+    touchFired = false;
+  });
+
+  window.addEventListener('resize', fitText);
+</script>
+</body>
+</html>
