@@ -6,6 +6,7 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <title>Garyisms</title>
+  <link rel="icon" href="data:,">
   <style>
     * {
       margin: 0;
@@ -148,16 +149,24 @@
     /* Version badge */
     #version {
       position: absolute;
-      bottom: calc(3% + 1px);
+      bottom: 3%;
       right: 14px;
       font-family: monospace;
       font-size: 10px;
-      color: rgba(255,255,255,0.55);
-      pointer-events: none;
       letter-spacing: 0.5px;
+      pointer-events: none;
+      background: rgba(0,0,0,0.3);
+      color: rgba(255,255,255,0.9);
+      padding: 5px 10px;
+      border-radius: 999px;
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
     }
 
-    #app.light #version { color: rgba(0,0,20,0.45); }
+    #app.light #version {
+      background: rgba(255,255,255,0.4);
+      color: rgba(20,20,50,0.9);
+    }
 
     /* Theme toggle */
     #theme-toggle {
