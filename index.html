@@ -228,6 +228,81 @@
       transform: translateX(14px);
       background: #1a1a2e;
     }
+
+    /* Filter toggle */
+    #filter-toggle {
+      position: absolute;
+      top: 14px;
+      left: 14px;
+      z-index: 10;
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      padding: 5px 9px;
+      border-radius: 999px;
+      cursor: pointer;
+      background: rgba(0,0,0,0.35);
+      border: 1px solid rgba(255,255,255,0.2);
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+      transition: background 0.4s ease, border-color 0.4s ease;
+    }
+
+    #app.light #filter-toggle {
+      background: rgba(255,255,255,0.5);
+      border-color: rgba(0,0,0,0.12);
+    }
+
+    #filter-toggle:active { opacity: 0.7; }
+
+    .ftgl-label {
+      font-family: sans-serif;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.45);
+      transition: color 0.3s ease;
+    }
+
+    /* default (all mode): "All" is active */
+    #app      .ftgl-label.all { color: rgba(255,255,255,0.95); }
+    #app      .ftgl-label.gaz { color: rgba(255,255,255,0.45); }
+    /* gaz mode: "Gaz" is active */
+    #app.gaz  .ftgl-label.all { color: rgba(255,255,255,0.45); }
+    #app.gaz  .ftgl-label.gaz { color: rgba(255,255,255,0.95); }
+    /* light theme overrides */
+    #app.light      .ftgl-label.all { color: rgba(20,20,50,0.95); }
+    #app.light      .ftgl-label.gaz { color: rgba(20,20,50,0.35); }
+    #app.light.gaz  .ftgl-label.all { color: rgba(20,20,50,0.35); }
+    #app.light.gaz  .ftgl-label.gaz { color: rgba(20,20,50,0.95); }
+
+    .ftgl-pill {
+      width: 32px;
+      height: 18px;
+      border-radius: 9px;
+      background: rgba(255,255,255,0.2);
+      position: relative;
+      transition: background 0.3s ease;
+      flex-shrink: 0;
+    }
+
+    #app.light .ftgl-pill { background: rgba(20,20,50,0.15); }
+
+    .ftgl-pill::after {
+      content: '';
+      position: absolute;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: #fff;
+      top: 3px; left: 3px;
+      transition: transform 0.3s ease, background 0.3s ease;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+    }
+
+    #app.gaz .ftgl-pill::after { transform: translateX(14px); }
+    #app.light .ftgl-pill::after { background: #1a1a2e; }
   </style>
 </head>
 <body>
@@ -235,6 +310,12 @@
 
   <img id="bg-dark-img"  src="bg1.png" alt="">
   <img id="bg-light-img" src="bg2.png" alt="">
+
+  <div id="filter-toggle">
+    <span class="ftgl-label all">All</span>
+    <div class="ftgl-pill"></div>
+    <span class="ftgl-label gaz">Gaz</span>
+  </div>
 
   <div id="theme-toggle">
     <span class="tgl-label dark">Dark</span>
@@ -245,56 +326,90 @@
   <div id="quote-zone">
     <div id="quote-block">
       <p id="quote"></p>
-      <p id="attr">— Gaz</p>
+      <p id="attr"></p>
     </div>
   </div>
 
   <p id="hint">tap for another</p>
-  <span id="version">v1.7</span>
+  <span id="version">v1.8</span>
 
 </div>
 <script>
   const quotes = [
-    "Like a split chilli between the bum cheeks",
-    "A tram could run up his ass and he wouldn't notice until the people got out",
-    "Just another version of corporate tunnel ball in a different country",
-    "It's like trying to get a flat kid to run fast",
-    "Like three cats fighting for position in a flour bag",
-    "He should get a job blowing balloons at parties.",
-    "It's like pushing a huge turd up a hill with your chin",
-    "I wouldn't trust you to sit right on a toilet seat",
-    "You're the reason people immigrate to other countries",
-    "We're currently doing a work-exchange program with lifers at Changi Prison, and they can't wait to go back",
-    "Can you just quickly update CRM? Yeah, it's like saying \"Yeah, can you quickly count the bricks in the Great Wall of China?\"",
-    "We're so close you can smell it. It just doesn't smell very good.",
-    "Happier than a one legged lesbian on a pogo stick",
-    "It's time I'll never get back and it's of no value to me. It's like scratching someone else's itch…",
-    "I'm the only hang down in a front bum family",
-    "Less is more… unless it's beer",
-    "Like trying to set up a snowfield in the Sahara",
-    "As the man said, you can't pick up a turd from the clean end",
-    "He's so happy you'd think he'd been kissed on the dick by a fairy",
-    "Always marry your second wife first",
-    "Hey – when you take your thumb out of your bum, stick it in your mouth why don't you?",
-    "He's like an ugg boot on a camel",
-    "Busier than a one legged man in an arse kicking contest",
-    "It's like rubbing sand into tinea",
-    "He could be useful if you coated him in concrete and used him as a speed hump",
-    "I gave it up… right after sex with pigs",
-    "You can't do that… you can't put the poo back in…",
-    "That's \"the cloud\"… not a fart",
-    "Don't do anything I wouldn't watch",
-    "New Zealand – they haven't worked since 1986, they were so disappointed they didn't get the Olympics back then but apparently you had to have electricity…",
-    "It's like trying to poo down a straw",
-    "It's like trying to pass an elephant (eyes squinting as he says this)",
-    "I don't give a frog's knob what you've got in there."
+    { text: "Like a split chilli between the bum cheeks", attr: "Gaz" },
+    { text: "A tram could run up his ass and he wouldn't notice until the people got out", attr: "Gaz" },
+    { text: "Just another version of corporate tunnel ball in a different country", attr: "Gaz" },
+    { text: "It's like trying to get a flat kid to run fast", attr: "Gaz" },
+    { text: "Like three cats fighting for position in a flour bag", attr: "Gaz" },
+    { text: "He should get a job blowing balloons at parties.", attr: "Gaz" },
+    { text: "It's like pushing a huge turd up a hill with your chin", attr: "Gaz" },
+    { text: "I wouldn't trust you to sit right on a toilet seat", attr: "Gaz" },
+    { text: "You're the reason people immigrate to other countries", attr: "Gaz" },
+    { text: "We're currently doing a work-exchange program with lifers at Changi Prison, and they can't wait to go back", attr: "Gaz" },
+    { text: "Can you just quickly update CRM? Yeah, it's like saying \"Yeah, can you quickly count the bricks in the Great Wall of China?\"", attr: "Gaz" },
+    { text: "We're so close you can smell it. It just doesn't smell very good.", attr: "Gaz" },
+    { text: "Happier than a one legged lesbian on a pogo stick", attr: "Gaz" },
+    { text: "It's time I'll never get back and it's of no value to me. It's like scratching someone else's itch…", attr: "Gaz" },
+    { text: "I'm the only hang down in a front bum family", attr: "Gaz" },
+    { text: "Less is more… unless it's beer", attr: "Gaz" },
+    { text: "Like trying to set up a snowfield in the Sahara", attr: "Gaz" },
+    { text: "As the man said, you can't pick up a turd from the clean end", attr: "Gaz" },
+    { text: "He's so happy you'd think he'd been kissed on the dick by a fairy", attr: "Gaz" },
+    { text: "Always marry your second wife first", attr: "Gaz" },
+    { text: "Hey – when you take your thumb out of your bum, stick it in your mouth why don't you?", attr: "Gaz" },
+    { text: "He's like an ugg boot on a camel", attr: "Gaz" },
+    { text: "Busier than a one legged man in an arse kicking contest", attr: "Gaz" },
+    { text: "It's like rubbing sand into tinea", attr: "Gaz" },
+    { text: "He could be useful if you coated him in concrete and used him as a speed hump", attr: "Gaz" },
+    { text: "I gave it up… right after sex with pigs", attr: "Gaz" },
+    { text: "You can't do that… you can't put the poo back in…", attr: "Gaz" },
+    { text: "That's \"the cloud\"… not a fart", attr: "Gaz" },
+    { text: "Don't do anything I wouldn't watch", attr: "Gaz" },
+    { text: "New Zealand – they haven't worked since 1986, they were so disappointed they didn't get the Olympics back then but apparently you had to have electricity…", attr: "Gaz" },
+    { text: "It's like trying to poo down a straw", attr: "Gaz" },
+    { text: "It's like trying to pass an elephant (eyes squinting as he says this)", attr: "Gaz" },
+    { text: "I don't give a frog's knob what you've got in there.", attr: "Gaz" },
+    { text: "Don't let my knowledge get in the way of your confidence", attr: "Anon" },
+    { text: "I admire your courage to speak in the absence of knowledge", attr: "Anon" },
+    { text: "I'm jealous of everyone that hasn't met you", attr: "Anon" },
+    { text: "You've mastered the tone of authority without the inconvenience of depth.", attr: "Anon" },
+    { text: "When someone says 'do you know who I am.' My favourite reply is 'no, but I bet those who do are envious of me.'", attr: "Anon" },
+    { text: "You're the first person I've met who's achieved their full potential.", attr: "Anon" },
+    { text: "I wish I didn't have common sense, you seem so happy", attr: "Anon" },
+    { text: "It's interesting what you've done with your education.", attr: "Anon" },
+    { text: "Nothing lights up a room like your absence.", attr: "Anon" },
+    { text: "You're the reason instructions have pictures.", attr: "Anon" },
+    { text: "I regret not meeting you later", attr: "Anon" },
+    { text: "I can see you are committed to your current level of understanding.", attr: "Anon" },
+    { text: "It's impossible to underestimate you.", attr: "Anon" },
+    { text: "You put in your two cents and got change", attr: "Anon" },
+    { text: "You absolutely light up every room you walk out of.", attr: "Anon" },
+    { text: "I refuse to engage in a battle of wits with an unarmed man.", attr: "Anon" },
+    { text: "Your food for thought leaves everyone still hungry", attr: "Anon" },
+    { text: "Thank you for helping me, it was like doing it myself only harder.", attr: "Anon" },
+    { text: "I can explain it to you, but I can't understand it for you.", attr: "Anon" },
+    { text: "As an outsider, what are your views on intelligence?", attr: "Anon" },
+    { text: "I could explain to you, but I left my crayons at home.", attr: "Anon" },
+    { text: "It's truly remarkable that you were the strongest swimmer your father had", attr: "Anon" },
+    { text: "You have a rare talent for speaking at length without disturbing the facts.", attr: "Anon" },
+    { text: "You're clearly intelligent. It just doesn't show up where it matters.", attr: "Anon" },
+    { text: "I love how you think outside the box, it's clear no one's ever invited you inside one", attr: "Anon" },
+    { text: "When it comes to thinking, you travel light", attr: "Anon" },
+    { text: "I admire how you never let evidence interfere with your opinions", attr: "Anon" },
+    { text: "Light travels faster than sound. That's why some people appear bright until you hear them speak", attr: "Anon" },
+    { text: "You have a unique way of contributing without adding much.", attr: "Anon" },
+    { text: "You have a special way of speaking that makes people appreciate your silence", attr: "Anon" },
+    { text: "You're not wrong, you're just operating in a different intellectual time zone.", attr: "Anon" },
+    { text: "Intelligence seeks you, but you appear to be a master at hiding.", attr: "Anon" }
   ];
 
-  const app        = document.getElementById('app');
-  const quoteEl   = document.getElementById('quote');
+  const app         = document.getElementById('app');
+  const quoteEl    = document.getElementById('quote');
+  const attrEl     = document.getElementById('attr');
   const quoteBlock = document.getElementById('quote-block');
   const quoteZone  = document.getElementById('quote-zone');
   const toggle     = document.getElementById('theme-toggle');
+  const filterBtn  = document.getElementById('filter-toggle');
 
   let deck = [];
 
@@ -305,12 +420,19 @@
     }
   }
 
+  function getPool() {
+    return app.classList.contains('gaz')
+      ? quotes.filter(q => q.attr === 'Gaz')
+      : quotes;
+  }
+
   function pickNext() {
+    const pool = getPool();
     if (!deck.length) {
-      deck = quotes.map((_, i) => i);
+      deck = pool.map((_, i) => i);
       shuffle(deck);
     }
-    return quotes[deck.pop()];
+    return pool[deck.pop()];
   }
 
   // Scale font until the block fits in both dimensions
@@ -333,20 +455,27 @@
   function showQuote() {
     quoteBlock.classList.add('fade');
     setTimeout(() => {
-      quoteEl.textContent = pickNext();
+      const q = pickNext();
+      quoteEl.textContent = q.text;
+      attrEl.textContent = '— ' + q.attr;
       quoteBlock.classList.remove('fade');
-      // Double rAF ensures paint is complete before measuring
       requestAnimationFrame(() => requestAnimationFrame(fitText));
     }, 300);
   }
 
-  quoteEl.textContent = pickNext();
+  // Initial quote
+  (function() {
+    const q = pickNext();
+    quoteEl.textContent = q.text;
+    attrEl.textContent = '— ' + q.attr;
+  })();
 
   // ResizeObserver fires when zone gets real dimensions; double rAF for paint
   new ResizeObserver(() => {
     requestAnimationFrame(() => requestAnimationFrame(fitText));
   }).observe(quoteZone);
 
+  // Theme toggle
   toggle.addEventListener('touchstart', e => {
     e.stopPropagation();
   }, { passive: true });
@@ -356,6 +485,18 @@
     app.classList.toggle('dark');
     app.classList.toggle('light');
     setTimeout(fitText, 520);
+  });
+
+  // Filter toggle
+  filterBtn.addEventListener('touchstart', e => {
+    e.stopPropagation();
+  }, { passive: true });
+
+  filterBtn.addEventListener('click', e => {
+    e.stopPropagation();
+    app.classList.toggle('gaz');
+    deck = [];
+    showQuote();
   });
 
   let touchFired = false;
