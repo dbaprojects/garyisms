@@ -57,26 +57,28 @@
     /* Quote zone — positioned over each background's content area */
     #quote-zone {
       position: absolute;
-      left: 13%;
-      right: 13%;
+      left: 14%;
+      right: 14%;
       top: 50%;
       bottom: 17%;
       display: flex;
       align-items: center;
       justify-content: center;
+      overflow: hidden;
       transition: top 0.5s ease, left 0.5s ease, right 0.5s ease, bottom 0.5s ease;
     }
 
     #app.light #quote-zone {
       top: 44%;
       bottom: 15%;
-      left: 13%;
-      right: 13%;
+      left: 15%;
+      right: 15%;
     }
 
     /* Quote + attribution block — font-size set by fitText() */
     #quote-block {
       width: 100%;
+      max-width: 100%;
       min-width: 0;
       transition: opacity 0.3s ease;
     }
@@ -294,16 +296,20 @@
     return quotes[deck.pop()];
   }
 
-  // Scale font-size on quoteBlock until the whole block (quote + attr) fits the zone
+  // Scale font until the block fits in both dimensions
   function fitText() {
     const zoneH = quoteZone.clientHeight;
-    if (!zoneH) return;
-    const available = zoneH - 16;
+    const zoneW = quoteZone.clientWidth;
+    if (!zoneH || !zoneW) return;
+    const availH = zoneH - 16;
     let size = 30;
     quoteBlock.style.fontSize = size + 'px';
-    while (quoteBlock.scrollHeight > available && size > 11) {
-      size -= 0.5;
+    while (size > 11) {
       quoteBlock.style.fontSize = size + 'px';
+      const overflowsH = quoteBlock.scrollHeight > availH;
+      const overflowsW = quoteBlock.scrollWidth > quoteBlock.clientWidth + 1;
+      if (!overflowsH && !overflowsW) break;
+      size -= 0.5;
     }
   }
 
@@ -312,14 +318,17 @@
     setTimeout(() => {
       quoteEl.textContent = pickNext();
       quoteBlock.classList.remove('fade');
-      fitText();
+      // Double rAF ensures paint is complete before measuring
+      requestAnimationFrame(() => requestAnimationFrame(fitText));
     }, 300);
   }
 
   quoteEl.textContent = pickNext();
 
-  // ResizeObserver fires once the zone has real dimensions (reliable on mobile)
-  new ResizeObserver(fitText).observe(quoteZone);
+  // ResizeObserver fires when zone gets real dimensions; double rAF for paint
+  new ResizeObserver(() => {
+    requestAnimationFrame(() => requestAnimationFrame(fitText));
+  }).observe(quoteZone);
 
   toggle.addEventListener('touchstart', e => {
     e.stopPropagation();
