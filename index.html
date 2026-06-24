@@ -57,8 +57,8 @@
     /* Quote zone — positioned over each background's content area */
     #quote-zone {
       position: absolute;
-      left: 16%;
-      right: 16%;
+      left: 19%;
+      right: 19%;
       top: 50%;
       bottom: 17%;
       display: flex;
@@ -71,8 +71,8 @@
     #app.light #quote-zone {
       top: 44%;
       bottom: 15%;
-      left: 15%;
-      right: 15%;
+      left: 19%;
+      right: 19%;
     }
 
     /* Quote + attribution block — font-size set by fitText() */
@@ -80,6 +80,7 @@
       width: 100%;
       max-width: 100%;
       min-width: 0;
+      padding: 0 6px;
       transition: opacity 0.3s ease;
     }
 
@@ -317,7 +318,7 @@
     const zoneW = quoteZone.clientWidth;
     if (!zoneH || !zoneW) return;
     const availH = zoneH - 16;
-    let size = 26;
+    let size = 24;
     quoteBlock.style.fontSize = size + 'px';
     while (size > 11) {
       quoteBlock.style.fontSize = size + 'px';
