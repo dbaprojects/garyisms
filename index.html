@@ -7,6 +7,8 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <title>Garyisms</title>
   <link rel="icon" href="data:,">
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#1e50a0">
   <style>
     * {
       margin: 0;
@@ -93,7 +95,7 @@
     /* "tap for another" — styled text in the blue decorative strip */
     #hint {
       position: absolute;
-      bottom: 8%;
+      bottom: 9%;
       left: 0; right: 0;
       text-align: center;
       font-family: 'Georgia', serif;
@@ -107,25 +109,8 @@
 
     /* Filter toggle — centred in the blue strip */
     #filter-toggle {
-      position: absolute;
-      bottom: 2.5%;
-      left: 50%;
-      transform: translateX(-50%);
-      z-index: 10;
-      display: flex;
-      align-items: center;
-      gap: 7px;
-      padding: 5px 11px;
-      border-radius: 999px;
-      cursor: pointer;
-      background: rgba(0,0,0,0.25);
-      border: 1px solid rgba(255,255,255,0.35);
-      backdrop-filter: blur(6px);
-      -webkit-backdrop-filter: blur(6px);
-      white-space: nowrap;
+      position: relative;
     }
-
-    #filter-toggle:active { opacity: 0.7; }
 
     .ftgl-label {
       font-family: sans-serif;
@@ -180,6 +165,126 @@
       pointer-events: none;
       letter-spacing: 0.5px;
     }
+
+    /* Shared pill button style */
+    .ctrl-pill {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      padding: 5px 11px;
+      border-radius: 999px;
+      cursor: pointer;
+      background: rgba(0,0,0,0.25);
+      border: 1px solid rgba(255,255,255,0.35);
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+      white-space: nowrap;
+    }
+
+    .ctrl-pill:active { opacity: 0.7; }
+
+    /* Install button */
+    #install-btn {
+      font-family: sans-serif;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.9);
+    }
+
+    #install-btn.hidden { display: none; }
+
+    /* Bottom bar */
+    #bottom-bar {
+      position: absolute;
+      bottom: 2.5%;
+      left: 3%;
+      right: 3%;
+      z-index: 10;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    /* Install instructions modal */
+    #install-modal {
+      display: none;
+      position: absolute;
+      inset: 0;
+      z-index: 100;
+      align-items: center;
+      justify-content: center;
+      background: rgba(0,0,0,0.55);
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
+    }
+
+    #install-modal.open { display: flex; }
+
+    #modal-box {
+      background: #f5f0e8;
+      border-radius: 16px;
+      width: 80%;
+      max-width: 340px;
+      overflow: hidden;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+    }
+
+    #modal-header {
+      background: #1e50a0;
+      padding: 14px 18px;
+      font-family: Georgia, serif;
+      font-size: 15px;
+      font-weight: bold;
+      color: #fff;
+      text-align: center;
+      letter-spacing: 0.5px;
+    }
+
+    #modal-body {
+      padding: 16px 18px 8px;
+      font-family: Georgia, serif;
+      font-size: 13px;
+      color: #1a1a2e;
+      line-height: 1.6;
+    }
+
+    #modal-body h3 {
+      font-size: 12px;
+      font-weight: bold;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      color: #1e50a0;
+      margin: 10px 0 4px;
+    }
+
+    #modal-body h3:first-child { margin-top: 0; }
+
+    #modal-body ol {
+      margin: 0 0 4px 18px;
+      padding: 0;
+    }
+
+    #modal-body li { margin-bottom: 3px; }
+
+    #modal-close {
+      display: block;
+      margin: 12px auto 14px;
+      padding: 8px 28px;
+      border-radius: 999px;
+      border: none;
+      background: #1e50a0;
+      color: #fff;
+      font-family: sans-serif;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      cursor: pointer;
+    }
+
+    #modal-close:active { opacity: 0.8; }
   </style>
 </head>
 <body>
@@ -196,13 +301,39 @@
 
   <p id="hint">— tap for another —</p>
 
-  <div id="filter-toggle">
-    <span class="ftgl-label all">All</span>
-    <div class="ftgl-pill"></div>
-    <span class="ftgl-label gaz">Just Gaz</span>
+  <div id="bottom-bar">
+    <div id="install-btn" class="ctrl-pill hidden">Install</div>
+    <div id="filter-toggle" class="ctrl-pill">
+      <span class="ftgl-label all">All</span>
+      <div class="ftgl-pill"></div>
+      <span class="ftgl-label gaz">Just Gaz</span>
+    </div>
   </div>
 
-  <span id="version">v2.2</span>
+  <div id="install-modal">
+    <div id="modal-box">
+      <div id="modal-header">Add to Home Screen</div>
+      <div id="modal-body">
+        <h3>iPhone / iPad</h3>
+        <ol>
+          <li>Open this page in <strong>Safari</strong></li>
+          <li>Tap the <strong>Share</strong> button at the bottom of the screen</li>
+          <li>Scroll down and tap <strong>"Add to Home Screen"</strong></li>
+          <li>Tap <strong>Add</strong></li>
+        </ol>
+        <h3>Android</h3>
+        <ol>
+          <li>Open this page in <strong>Chrome</strong></li>
+          <li>Tap the <strong>menu</strong> (three dots, top right)</li>
+          <li>Tap <strong>"Add to Home Screen"</strong></li>
+          <li>Tap <strong>Add</strong></li>
+        </ol>
+      </div>
+      <button id="modal-close">Got it</button>
+    </div>
+  </div>
+
+  <span id="version">v2.3</span>
 
 </div>
 <script>
@@ -446,6 +577,54 @@
     if (!touchFired) showQuote();
     touchFired = false;
   });
+
+  // PWA install
+  const installBtn = document.getElementById('install-btn');
+  const modal      = document.getElementById('install-modal');
+  const modalClose = document.getElementById('modal-close');
+  let deferredPrompt = null;
+
+  const isStandalone = window.matchMedia('(display-mode: standalone)').matches
+                    || window.navigator.standalone === true;
+
+  if (!isStandalone) {
+    installBtn.classList.remove('hidden');
+  }
+
+  window.addEventListener('beforeinstallprompt', e => {
+    e.preventDefault();
+    deferredPrompt = e;
+    installBtn.classList.remove('hidden');
+  });
+
+  window.addEventListener('appinstalled', () => {
+    installBtn.classList.add('hidden');
+    deferredPrompt = null;
+  });
+
+  installBtn.addEventListener('touchstart', e => e.stopPropagation(), { passive: true });
+  installBtn.addEventListener('click', async e => {
+    e.stopPropagation();
+    if (deferredPrompt) {
+      deferredPrompt.prompt();
+      const { outcome } = await deferredPrompt.userChoice;
+      if (outcome === 'accepted') {
+        installBtn.classList.add('hidden');
+        deferredPrompt = null;
+      }
+    } else {
+      modal.classList.add('open');
+    }
+  });
+
+  modalClose.addEventListener('click', () => modal.classList.remove('open'));
+  modal.addEventListener('click', e => {
+    if (e.target === modal) modal.classList.remove('open');
+  });
+
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('./sw.js');
+  }
 </script>
 </body>
 </html>
