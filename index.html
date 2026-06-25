@@ -311,7 +311,7 @@
     </div>
   </div>
 
-  <span id="version">v2.6</span>
+  <span id="version">v2.7</span>
 
 </div>
 <script>
@@ -474,6 +474,7 @@
   const filterBtn  = document.getElementById('filter-toggle');
 
   let deck = [];
+  let filterMode = 'gaz';
 
   function shuffle(arr) {
     for (let i = arr.length - 1; i > 0; i--) {
@@ -533,8 +534,6 @@
   new ResizeObserver(() => {
     requestAnimationFrame(() => requestAnimationFrame(fitText));
   }).observe(quoteZone);
-
-  let filterMode = 'gaz';
 
   filterBtn.addEventListener('touchstart', e => e.stopPropagation(), { passive: true });
   filterBtn.addEventListener('click', e => {
