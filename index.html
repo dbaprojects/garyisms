@@ -9,6 +9,14 @@
   <link rel="icon" href="data:,">
   <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#1e50a0">
+  <!-- Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-RRNG6459BB"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-RRNG6459BB');
+  </script>
   <style>
     * {
       margin: 0;
@@ -311,7 +319,7 @@
     </div>
   </div>
 
-  <span id="version">v2.7</span>
+  <span id="version">v2.8</span>
 
 </div>
 <script>
@@ -522,6 +530,7 @@
       attrEl.textContent = '— ' + q.attr;
       quoteBlock.classList.remove('fade');
       requestAnimationFrame(() => requestAnimationFrame(fitText));
+      gtag('event', 'quote_tap', { filter_mode: filterMode, attribution: q.attr });
     }, 300);
   }
 
@@ -543,6 +552,7 @@
     filterMode = seg.dataset.filter;
     filterBtn.querySelectorAll('.seg').forEach(s => s.classList.toggle('active', s === seg));
     deck = [];
+    gtag('event', 'filter_change', { filter_mode: filterMode });
     showQuote();
   });
 
@@ -584,12 +594,14 @@
   installBtn.addEventListener('touchstart', e => e.stopPropagation(), { passive: true });
   installBtn.addEventListener('click', async e => {
     e.stopPropagation();
+    gtag('event', 'install_click');
     if (deferredPrompt) {
       deferredPrompt.prompt();
       const { outcome } = await deferredPrompt.userChoice;
       if (outcome === 'accepted') {
         installBtn.classList.add('hidden');
         deferredPrompt = null;
+        gtag('event', 'app_installed');
       }
     } else {
       modal.classList.add('open');
