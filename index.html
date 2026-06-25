@@ -312,7 +312,7 @@
 
   <div id="install-modal">
     <div id="modal-box">
-      <div id="modal-header">Add to Home Screen</div>
+      <div id="modal-header">Install as an App</div>
       <div id="modal-body">
         <h3>iPhone / iPad</h3>
         <ol>
@@ -333,7 +333,7 @@
     </div>
   </div>
 
-  <span id="version">v2.4</span>
+  <span id="version">v2.5</span>
 
 </div>
 <script>
@@ -618,7 +618,9 @@
     }
   });
 
+  modalClose.addEventListener('touchstart', e => e.stopPropagation(), { passive: true });
   modalClose.addEventListener('click', () => modal.classList.remove('open'));
+  modal.addEventListener('touchstart', e => e.stopPropagation(), { passive: true });
   modal.addEventListener('click', e => {
     if (e.target === modal) modal.classList.remove('open');
   });
