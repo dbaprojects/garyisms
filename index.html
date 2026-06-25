@@ -107,52 +107,30 @@
       pointer-events: none;
     }
 
-    /* Filter toggle — centred in the blue strip */
+    /* Filter toggle — 3-segment control */
     #filter-toggle {
       position: relative;
+      padding: 3px;
+      gap: 0;
     }
 
-    .ftgl-label {
+    .seg {
       font-family: sans-serif;
       font-size: 10px;
       font-weight: 700;
       letter-spacing: 1px;
       text-transform: uppercase;
-      transition: color 0.3s ease;
+      color: rgba(255,255,255,0.45);
+      padding: 4px 9px;
+      border-radius: 999px;
+      transition: background 0.2s ease, color 0.2s ease;
+      white-space: nowrap;
     }
 
-    /* default = gaz mode: "Just Gaz" bright, "All" dim */
-    .ftgl-label.all { color: rgba(255,255,255,0.4); }
-    .ftgl-label.gaz { color: rgba(255,255,255,0.95); }
-
-    #app.all .ftgl-label.all { color: rgba(255,255,255,0.95); }
-    #app.all .ftgl-label.gaz { color: rgba(255,255,255,0.4); }
-
-    .ftgl-pill {
-      width: 32px;
-      height: 18px;
-      border-radius: 9px;
-      background: rgba(255,255,255,0.25);
-      position: relative;
-      transition: background 0.3s ease;
-      flex-shrink: 0;
+    .seg.active {
+      background: rgba(255,255,255,0.28);
+      color: rgba(255,255,255,0.95);
     }
-
-    .ftgl-pill::after {
-      content: '';
-      position: absolute;
-      width: 12px;
-      height: 12px;
-      border-radius: 50%;
-      background: #fff;
-      top: 3px; left: 3px;
-      transition: transform 0.3s ease;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.3);
-    }
-
-    /* gaz = pill right; all = pill left */
-    #app      .ftgl-pill::after { transform: translateX(14px); }
-    #app.all  .ftgl-pill::after { transform: translateX(0); }
 
     /* Version badge */
     #version {
@@ -288,7 +266,7 @@
   </style>
 </head>
 <body>
-<div id="app" class="gaz">
+<div id="app">
 
   <img id="bg-img" src="bg2.png" alt="">
 
@@ -304,9 +282,9 @@
   <div id="bottom-bar">
     <div id="install-btn" class="ctrl-pill hidden">Install</div>
     <div id="filter-toggle" class="ctrl-pill">
-      <span class="ftgl-label all">All</span>
-      <div class="ftgl-pill"></div>
-      <span class="ftgl-label gaz">Just Gaz</span>
+      <span class="seg" data-filter="anon">Not Gaz</span>
+      <span class="seg" data-filter="all">All</span>
+      <span class="seg active" data-filter="gaz">Just Gaz</span>
     </div>
   </div>
 
@@ -333,7 +311,7 @@
     </div>
   </div>
 
-  <span id="version">v2.5</span>
+  <span id="version">v2.6</span>
 
 </div>
 <script>
@@ -505,9 +483,9 @@
   }
 
   function getPool() {
-    return app.classList.contains('all')
-      ? quotes
-      : quotes.filter(q => q.attr === 'Gaz');
+    if (filterMode === 'gaz')  return quotes.filter(q => q.attr === 'Gaz');
+    if (filterMode === 'anon') return quotes.filter(q => q.attr === 'Anon');
+    return quotes;
   }
 
   function pickNext() {
@@ -556,14 +534,15 @@
     requestAnimationFrame(() => requestAnimationFrame(fitText));
   }).observe(quoteZone);
 
-  filterBtn.addEventListener('touchstart', e => {
-    e.stopPropagation();
-  }, { passive: true });
+  let filterMode = 'gaz';
 
+  filterBtn.addEventListener('touchstart', e => e.stopPropagation(), { passive: true });
   filterBtn.addEventListener('click', e => {
     e.stopPropagation();
-    app.classList.toggle('gaz');
-    app.classList.toggle('all');
+    const seg = e.target.closest('.seg');
+    if (!seg) return;
+    filterMode = seg.dataset.filter;
+    filterBtn.querySelectorAll('.seg').forEach(s => s.classList.toggle('active', s === seg));
     deck = [];
     showQuote();
   });
